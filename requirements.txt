@@ -1,0 +1,7 @@
+Django==3.2.9
+django-environ==0.8.1
+djangorestframework==3.12.4
+djangorestframework_simplejwt==5.0.0
+requests==2.26.0
+drf-yasg==1.20.0
+Pillow==9.2.0
