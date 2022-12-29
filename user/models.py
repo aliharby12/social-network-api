@@ -4,6 +4,7 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin,
 )
+import uuid
 
 
 class UserManager(BaseUserManager):
@@ -34,6 +35,7 @@ class Gender_Types(models.TextChoices):
 class User(AbstractBaseUser, PermissionsMixin):
     """Custom user model that supports using email instead of username"""
 
+    uuid = models.UUIDField(default=uuid.uuid1, editable=False, unique=True)
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
