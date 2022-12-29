@@ -15,3 +15,11 @@ class PostSerializer(serializers.ModelSerializer):
             .select_related("post", "user")
             .count()
         )
+
+
+class UserLikedPostsSerializer(serializers.ModelSerializer):
+    post = PostSerializer()
+
+    class Meta:
+        model = UserLikedPost
+        fields = ["uuid", "post"]

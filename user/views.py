@@ -1,6 +1,7 @@
 from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 from rest_framework.request import Request
+from post.serializer import PostSerializer, UserLikedPostsSerializer
 from user.models import User
 from typing import cast
 from user.serializer import (
@@ -10,9 +11,14 @@ from user.serializer import (
 )
 from rest_framework_simplejwt.tokens import RefreshToken
 from drf_yasg.utils import swagger_auto_schema
+from django.db.models.query import QuerySet
+from post.models import Post, UserLikedPost
 
 
 class UserCreateView(generics.GenericAPIView):
+    """
+    create a new user instance
+    """
     serializer_class = CreateUserSerializer
     permission_classes = [permissions.AllowAny]
 
@@ -40,6 +46,9 @@ class UserCreateView(generics.GenericAPIView):
 
 
 class ProfileAPIView(generics.GenericAPIView):
+    """
+    get user profile data
+    """
     serializer_class = UserSerializer
 
     def get(self, request) -> Response:
@@ -49,3 +58,13 @@ class ProfileAPIView(generics.GenericAPIView):
             return Response("Unauthorized!", status=status.HTTP_401_UNAUTHORIZED)
         serializer = UserSerializer(user)
         return Response(serializer.data)
+
+
+class LikedPostsAPIView(generics.ListAPIView):
+    """
+    list user liked posts
+    """
+    serializer_class = UserLikedPostsSerializer
+
+    def get_queryset(self) -> QuerySet[Post]:
+        return UserLikedPost.objects.filter(user=self.request.user).select_related("user").order_by("-created_at")

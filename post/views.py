@@ -83,3 +83,20 @@ class DeletePostView(generics.GenericAPIView):
             return Response("Post not found!", status=status.HTTP_404_NOT_FOUND)
         post.delete()
         return Response("deleted!", status=status.HTTP_204_NO_CONTENT)
+
+
+class LikeUnlikePostView(generics.GenericAPIView):
+    """
+    like or unlike a post
+    """
+
+    def post(self, request: Request, uuid) -> Response:
+        try:
+            liked_post = UserLikedPost.objects.get(post__uuid=uuid, user=request.user)
+            liked_post.delete()
+            return Response("Post Unliked!", status=status.HTTP_200_OK)
+        except UserLikedPost.DoesNotExist:
+            liked_post = UserLikedPost.objects.create(
+                user=request.user, post=Post.objects.get(uuid=uuid)
+            )
+            return Response("Post Liked!", status=status.HTTP_200_OK)
