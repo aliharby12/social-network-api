@@ -19,6 +19,7 @@ class UserCreateView(generics.GenericAPIView):
     """
     create a new user instance
     """
+
     serializer_class = CreateUserSerializer
     permission_classes = [permissions.AllowAny]
 
@@ -49,6 +50,7 @@ class ProfileAPIView(generics.GenericAPIView):
     """
     get user profile data
     """
+
     serializer_class = UserSerializer
 
     def get(self, request) -> Response:
@@ -60,11 +62,31 @@ class ProfileAPIView(generics.GenericAPIView):
         return Response(serializer.data)
 
 
+class MyPostsAPIView(generics.ListAPIView):
+    """
+    list all my posts data
+    """
+
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        return (
+            Post.objects.filter(user=self.request.user)
+            .select_related("user")
+            .order_by("-created_at")
+        )
+
+
 class LikedPostsAPIView(generics.ListAPIView):
     """
     list user liked posts
     """
+
     serializer_class = UserLikedPostsSerializer
 
     def get_queryset(self) -> QuerySet[Post]:
-        return UserLikedPost.objects.filter(user=self.request.user).select_related("user").order_by("-created_at")
+        return (
+            UserLikedPost.objects.filter(user=self.request.user)
+            .select_related("user")
+            .order_by("-created_at")
+        )

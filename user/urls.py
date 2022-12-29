@@ -13,5 +13,6 @@ urlpatterns = [
     path("login/", TokenObtainPairView.as_view(), name="login"),
     path("profile/", ProfileAPIView.as_view(), name="profile"),
     path("liked-posts/", LikedPostsAPIView.as_view(), name="liked-posts"),
+    path("my-posts/", MyPostsAPIView.as_view(), name="my-posts"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 ]

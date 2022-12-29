@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from post.models import Post, UserLikedPost
 from django.db.models.query import QuerySet
+from django.contrib.auth import get_user_model
 
 
 class PostListView(generics.ListAPIView):
@@ -12,9 +13,7 @@ class PostListView(generics.ListAPIView):
     """
 
     serializer_class = PostSerializer
-
-    def get_queryset(self) -> QuerySet[Post]:
-        return Post.objects.all().select_related("user").order_by("-created_at")
+    queryset = Post.objects.all().select_related("user").order_by("-created_at")
 
 
 class AddPostView(generics.GenericAPIView):
@@ -27,7 +26,13 @@ class AddPostView(generics.GenericAPIView):
     def post(self, request: Request) -> Response:
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            try:
+                user = get_user_model().objects.get(uuid=request.user.uuid)
+            except:
+                return Response(
+                    "Unauthorized User!", status=status.HTTP_401_UNAUTHORIZED
+                )
+            serializer.save(user=user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -59,7 +64,12 @@ class UpdatePostView(generics.GenericAPIView):
     serializer_class = PostSerializer
 
     def patch(self, request: Request, uuid) -> Response:
-        post = Post.objects.get(uuid=uuid, user=request.user)
+        try:
+            post = Post.objects.get(uuid=uuid, user=request.user)
+        except:
+            return Response(
+                "no available posts with this uuid!", status=status.HTTP_404_NOT_FOUND
+            )
         serializer = PostSerializer(
             post, data=request.data, context={"request": request}, partial=True
         )
