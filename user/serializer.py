@@ -18,7 +18,7 @@ class CreateUserSerializerResponse(serializers.Serializer):
     access = serializers.CharField()
     refresh = serializers.CharField()
     user = UserSerializer()
-    
+
 
 class CreateUserSerializer(serializers.ModelSerializer):
     class Meta:

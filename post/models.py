@@ -1,6 +1,7 @@
 from django.db import models
 
 from user.models import User
+import uuid
 
 
 class TimeStampedModel(models.Model):
@@ -20,6 +21,7 @@ class Post(TimeStampedModel):
     database table to save user posts
     """
 
+    uuid = models.UUIDField(default=uuid.uuid1, editable=False, unique=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_posts")
     title = models.CharField(max_length=256)
     body = models.TextField()
@@ -36,6 +38,7 @@ class UserLikedPost(TimeStampedModel):
     database table to save user liked posts
     """
 
+    uuid = models.UUIDField(default=uuid.uuid1, editable=False, unique=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_likes")
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="liked_posts")
 

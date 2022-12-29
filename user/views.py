@@ -3,7 +3,11 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from user.models import User
 from typing import cast
-from user.serializer import CreateUserSerializer, UserSerializer, CreateUserSerializerResponse
+from user.serializer import (
+    CreateUserSerializer,
+    UserSerializer,
+    CreateUserSerializerResponse,
+)
 from rest_framework_simplejwt.tokens import RefreshToken
 from drf_yasg.utils import swagger_auto_schema
 
