@@ -14,7 +14,6 @@ def save_holiday_for_user(id):
     get_holiday = requests.get(
         f"https://holidays.abstractapi.com/v1/?api_key={settings.GEO_HOLIDAY_KEY}&country={get_country.json()['country_code']}&year={int(user.joined_at.year)}&month={int(user.joined_at.month)}&day={int(user.joined_at.day)}"
     )
-    logging.warning(f"holiday: {get_holiday.json()}")
     if get_country.ok and get_holiday.json():
         user.signed_up_holiday = get_holiday.json()[0]["name"]
         user.save()
