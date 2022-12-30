@@ -36,6 +36,7 @@ class TestCreateUser(TestCase):
         }
 
         super().setUp()
+
     @skip
     def test_create_user_successfully(self):
         response = self.client.post(self.url, data=self.body, format="json")

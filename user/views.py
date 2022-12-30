@@ -15,6 +15,8 @@ from drf_yasg.utils import swagger_auto_schema
 from django.db.models.query import QuerySet
 from post.models import Post, UserLikedPost
 from django.db import transaction
+import requests
+from django.conf import settings
 
 
 class UserCreateView(generics.GenericAPIView):
@@ -35,11 +37,6 @@ class UserCreateView(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        # x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
-        # if x_forwarded_for:
-        #     ip = x_forwarded_for.split(",")[0]
-        # else:
-        #     ip = request.META.get("REMOTE_ADDR")
         save_holiday_for_user.delay(user.id)
         token = RefreshToken.for_user(serializer.instance)
         return Response(
@@ -52,6 +49,27 @@ class UserCreateView(generics.GenericAPIView):
             },
             status=status.HTTP_201_CREATED,
         )
+
+        # HINT:
+        # I commented on this part of the code because Django
+        # by default validates the email formatting
+        # email = serializer.validated_data["email"]
+        # e_response = requests.get(f"https://emailvalidation.abstractapi.com/v1/?api_key={settings.EMAIL_KEY}&email={email}")
+        # if e_response.json()["is_valid_format"]["value"] == True:
+        #     user = serializer.save()
+        #     save_holiday_for_user.delay(user.id)
+        #     token = RefreshToken.for_user(serializer.instance)
+        #     return Response(
+        #         {
+        #             "access": str(token.access_token),
+        #             "refresh": str(token),
+        #             "user": UserSerializer(
+        #                 instance=user, context={"request": request}
+        #             ).data,
+        #         },
+        #         status=status.HTTP_201_CREATED,
+        #     )
+        # return Response("enter a valid email address", status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProfileAPIView(generics.GenericAPIView):

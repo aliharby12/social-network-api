@@ -28,7 +28,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -179,6 +179,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 GEO_IP_KEY = env("GEO_IP_KEY")
 GEO_HOLIDAY_KEY = env("GEO_HOLIDAY_KEY")
+EMAIL_KEY = env("EMAIL_KEY")
 
 # Celery settings
 CELERY_BROKER_URL = "redis://localhost:6379"
@@ -186,20 +187,20 @@ CELERY_RESULT_BACKEND = "redis://localhost:6379"
 
 # LOGGING
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'WARNING',
-            'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'warning.log',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "file": {
+            "level": "WARNING",
+            "class": "logging.FileHandler",
+            "filename": BASE_DIR / "warning.log",
         },
     },
-    'loggers': {
-        '': {
-            'handlers': ['file'],
-            'level': 'WARNING',
-            'propagate': True,
+    "loggers": {
+        "": {
+            "handlers": ["file"],
+            "level": "WARNING",
+            "propagate": True,
         },
     },
 }
