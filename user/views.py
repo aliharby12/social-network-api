@@ -4,6 +4,7 @@ from rest_framework.request import Request
 from post.serializer import PostSerializer, UserLikedPostsSerializer
 from user.models import User
 from typing import cast
+from user.tasks import save_holiday_for_user
 from user.serializer import (
     CreateUserSerializer,
     UserSerializer,
@@ -13,6 +14,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from drf_yasg.utils import swagger_auto_schema
 from django.db.models.query import QuerySet
 from post.models import Post, UserLikedPost
+from django.db import transaction
 
 
 class UserCreateView(generics.GenericAPIView):
@@ -28,12 +30,18 @@ class UserCreateView(generics.GenericAPIView):
             status.HTTP_201_CREATED: CreateUserSerializerResponse,
         }
     )
+    @transaction.atomic
     def post(self, request: Request) -> Response:
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
+        # x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
+        # if x_forwarded_for:
+        #     ip = x_forwarded_for.split(",")[0]
+        # else:
+        #     ip = request.META.get("REMOTE_ADDR")
+        save_holiday_for_user.delay(user.id)
         token = RefreshToken.for_user(serializer.instance)
-
         return Response(
             {
                 "access": str(token.access_token),

@@ -86,16 +86,21 @@ class TestLoginAndProfile(TestCase):
         self.assertEquals(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_login_fail_wrong_email(self):
-        response = self.client.post(self.login_url, data=self.body_wrong_email, format="json")
+        response = self.client.post(
+            self.login_url, data=self.body_wrong_email, format="json"
+        )
         self.assertEquals(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_get_profile_successfully(self):
-        response = self.client.get(self.profile_url, data=self.body, format="json", **self.headers)
+        response = self.client.get(
+            self.profile_url, data=self.body, format="json", **self.headers
+        )
         self.assertEquals(response.status_code, status.HTTP_200_OK)
-    
+
     def test_get_profile_no_token(self):
         response = self.client.get(self.profile_url, data=self.body, format="json")
         self.assertEquals(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
 
 class TestGetMyPosts(TestCase):
     def setUp(self):
