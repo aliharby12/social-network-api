@@ -79,7 +79,7 @@ class ProfileAPIView(generics.GenericAPIView):
 
     serializer_class = UserSerializer
 
-    def get(self, request) -> Response:
+    def get(self, request: Request) -> Response:
         try:
             user = User.objects.get(uuid=request.user.uuid)
         except:
@@ -95,7 +95,7 @@ class MyPostsAPIView(generics.ListAPIView):
 
     serializer_class = PostSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Post]:
         return (
             Post.objects.filter(user=self.request.user)
             .select_related("user")

@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 @shared_task
-def save_holiday_for_user(id):
+def save_holiday_for_user(id: int) -> bool:
     user = User.objects.get(id=id)
     get_country = requests.get(
         f"https://ipgeolocation.abstractapi.com/v1/?api_key={settings.GEO_IP_KEY}"
